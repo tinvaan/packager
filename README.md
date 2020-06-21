@@ -2,12 +2,14 @@
 A `yaml` based source-code to package bundler.
 
 ## Supported formats
-* `.deb` - Ubuntu/Debian (`apt`, `dpkg`)
-* `.rpm` - RHEL, Yum
-* `.tar.gz`, `.tar.xz` - Pacman
+| Format | Host | Status |
+| -------|------|--------|
+| `.deb` | Ubuntu/Debian (`apt`, `dpkg`) | Active |
+| `.rpm` | RHEL, Yum | TODO |
+| `.tar.gz`, `.tar.xz` | ArchLinux/Pacman | TODO |
 
 
 ## Features
 * Create multiple package formats from your source code through a single command
-* `packager` log tightly integrated with `git` history and `CHANGELOG`
+* `packager` log tightly integrated with `git` history and `CHANGELOG` -- Coming soon!
 * Publish your packages via CLI -- Coming soon!

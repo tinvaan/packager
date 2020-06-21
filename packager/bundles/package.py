@@ -1,9 +1,4 @@
 
-import yaml
-
-from os.path import dirname
-
-
 class PackageBundle:
     def __init__(self, config):
         self.config = config

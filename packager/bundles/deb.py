@@ -14,14 +14,14 @@ class Debian(PackageBundle):
         makedirs(configdir + '/DEBIAN', exist_ok=True)
         with open(configdir + '/DEBIAN/control', 'w') as f:
             content = [
-                'Package: %s' % self.config.name,
-                'Verson: %s' % self.config.version,
-                'Section: Custom',
-                'Priority: optional',
-                'Architecture: all',
-                'Essential: no',
-                'Maintainer: %s' % self.config.maintainers,
-                'Description: %s' % self.config.description
+                'Package: %s\n' % self.config.name,
+                'Version: %s\n' % self.config.version,
+                'Section: Custom\n',
+                'Priority: optional\n',
+                'Architecture: all\n',
+                'Essential: no\n',
+                'Maintainer: %s\n' % self.config.maintainers,
+                'Description: %s\n' % self.config.description
             ]
             f.writelines(content)
         return build_package(configdir)
