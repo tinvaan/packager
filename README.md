@@ -1,4 +1,4 @@
-# Packager
+# Packager [![Build Status](https://cloud.drone.io/api/badges/tinvaan/packager/status.svg)](https://cloud.drone.io/tinvaan/packager)
 A `yaml` based source-code to package bundler.
 
 ## Supported formats
