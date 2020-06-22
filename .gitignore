@@ -1,4 +1,6 @@
-__pycache__/
+.packager/
 .pytest_cache/
 
 DEBIAN/
+__pycache__/
+packager.egg-info/
