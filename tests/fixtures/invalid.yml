@@ -1,0 +1,9 @@
+package:
+    name: example-deb
+    version: 1.0.0
+    description: "An example packager config for a debian package"
+    build: unknown
+    authors:
+        - Harish Navnit <harishnavnit@gmail.com>
+    targets:
+        - debian

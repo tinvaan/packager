@@ -3,7 +3,6 @@ import os
 import yaml
 import click
 
-from collections import OrderedDict
 from os.path import join, exists, isfile, basename
 
 from .configs.base import *
@@ -72,11 +71,14 @@ def validate(config):
     assert data.get('package').get('targets') and \
         len(set(data.get('package').get('targets')).difference(targets)) == 0
     click.echo('\nConfig file at %s is valid' % config.name)
+    return True
 
 
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def build(config):
+    if not validate(config):
+        return click.echo('Config file at %s is invalid' % config.name)
     data = yaml.safe_load(config)
     for target in data.get('package').get('targets'):
         bundle = get_target_bundle(config, target)
