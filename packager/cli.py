@@ -63,15 +63,17 @@ def validate(config):
         len(set(data.get('package').get('targets')).difference(targets)) == 0,\
         "Unsupported target specification"
     click.echo('\nConfig file at %s is valid' % config.name)
-    return True
+    return True, data
 
 
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def build(config):
-    if not validate(config):
-        return click.echo('Config file at %s is invalid' % config.name)
-    data = yaml.safe_load(config)
-    for target in data.get('package').get('targets'):
-        bundle = get_target_bundle(config, target)
-        bundle.build()
+    ctx = click.get_current_context()
+    valid, data = ctx.forward(validate)
+    if valid:
+        for target in data.get('package', {}).get('targets', []):
+            bundle = get_target_bundle(config, target)
+            bundle.build()
+        return
+    click.echo('Config file at %s is invalid' % config.name)
