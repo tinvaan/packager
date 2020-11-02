@@ -5,33 +5,20 @@ import click
 
 from os.path import join, exists, isfile, basename
 
-from .configs.base import *
-from .bundles.deb import Debian
-
-
-def get_target_bundle(config, target):
-    target = target.lower()
-    '''TODO
-    if target == 'rpm':
-        return RPMConfig(config.name)
-    if target == 'tar'  or target == 'archive':
-        return ArchiveConfig(config.name)
-    if target == 'pacman':
-        return PacmanConfig(config.name)
-    '''
-    if target == 'deb' or target == 'debian':
-        return Debian(DebConfig(config.name))
+from .utils import show, get_target_bundle
 
 
 @click.group()
-def cli():
+@click.pass_context
+def cli(ctx):
     """Packager: Package your source code into distributable bundles"""
-    pass
+    ctx.ensure_object(dict)
 
 
 @cli.command()
 @click.option('--force', is_flag=True)
-def init(force=False):
+@click.pass_context
+def init(ctx, force=False):
     workdir = join(os.getcwd(), '.packager')
     os.makedirs(workdir, exist_ok=True)
     config = join(workdir, 'config.yml')
@@ -49,6 +36,9 @@ def init(force=False):
                 }
             }, f, sort_keys=False)
 
+    show(config)
+    return ctx.invoke(validate, config=open(config, 'r', encoding='utf-8'))
+
 
 @cli.command()
 @click.argument('config', type=click.File('r'))
@@ -65,11 +55,13 @@ def validate(config):
         'targets'
     ])
     data = yaml.safe_load(config)
-    assert data.get('package').get('build') in builds
+    assert data.get('package').get('build') in builds, "Unsupported build type"
     assert data.get('package').keys() and \
-        len(set(data.get('package').keys()).difference(keys)) == 0
+        len(set(data.get('package').keys()).difference(keys)) == 0, \
+        "Missing required packager config key/values"
     assert data.get('package').get('targets') and \
-        len(set(data.get('package').get('targets')).difference(targets)) == 0
+        len(set(data.get('package').get('targets')).difference(targets)) == 0,\
+        "Unsupported target specification"
     click.echo('\nConfig file at %s is valid' % config.name)
     return True
 
