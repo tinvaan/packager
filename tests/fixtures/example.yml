@@ -8,8 +8,12 @@ package:
     install:
         - path: bin/foo
           source: /tmp/foo
+        - path: include/foo/foo.h
+          source: /tmp/foo.h
         - path: lib/bar.so
           source: /tmp/bar
+        - path: share/doc/foo
+          source: /tmp/foo-doc
     prefix: /usr
     targets:
         - debian
