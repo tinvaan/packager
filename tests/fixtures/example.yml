@@ -5,5 +5,11 @@ package:
     build: cmake
     authors:
         - Harish Navnit <harishnavnit@gmail.com>
+    install:
+        - path: bin/foo
+          source: /tmp/foo
+        - path: lib/bar.so
+          source: /tmp/bar
+    prefix: /usr
     targets:
         - debian

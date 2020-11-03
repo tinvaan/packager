@@ -1,18 +1,29 @@
 
 from os import makedirs
+from shutil import copyfile
+from os.path import join, abspath, dirname
 from deb_pkg_tools.package import build_package
 
 from .package import PackageBundle
 
 
 class Debian(PackageBundle):
+    def __init__(self, config):
+        super().__init__(config)
+        self.pkgtype = 'deb'
+
     def build(self):
         """
         Ref: https://linuxconfig.org/easy-way-to-create-a-debian-package-and-local-package-repository
         """
-        configdir = self.config.config_dir()
+        configdir = join(self.config.config_dir(), self.pkgtype)
         makedirs(configdir + '/DEBIAN', exist_ok=True)
-        with open(configdir + '/DEBIAN/control', 'w') as f:
+        self.control(configdir)
+        self.layout(configdir)
+        return build_package(configdir)
+
+    def control(self, debdir):
+        with open(debdir + '/DEBIAN/control', 'w') as f:
             content = [
                 'Package: %s\n' % self.config.name,
                 'Version: %s\n' % self.config.version,
@@ -24,4 +35,10 @@ class Debian(PackageBundle):
                 'Description: %s\n' % self.config.description
             ]
             f.writelines(content)
-        return build_package(configdir)
+
+    def layout(self, debdir):
+        for item in self.config.install:
+            source = item.get('source', '.')
+            dest = abspath(debdir + join(self.config.prefix, item.get('path', '.')))
+            makedirs(dirname(dest), exist_ok=True)
+            copyfile(source, dest)
