@@ -70,7 +70,7 @@ def validate(config):
     except AssertionError as err:
         raise click.BadParameter(err)
     ctx = click.get_current_context()
-    if not ctx.obj.get('init', False):
+    if not (ctx.obj.get('init', False) or ctx.obj.get('build', False)):
         click.echo('\nConfig file at %s is valid' % config.name)
     return True, data
 
@@ -78,7 +78,9 @@ def validate(config):
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def build(config):
+    click.echo()
     ctx = click.get_current_context()
+    ctx.obj['build'] = True
     valid, data = ctx.forward(validate)
     if valid:
         for target in data.get('package', {}).get('targets', []):
