@@ -37,7 +37,11 @@ def init(ctx, force=False):
             }, f, sort_keys=False)
 
     show(config)
-    return ctx.invoke(validate, config=open(config, 'r', encoding='utf-8'))
+    ctx.obj['init'] = True
+    valid, data = ctx.invoke(validate, config=open(config, 'r', encoding='utf-8'))
+    if valid:
+        return click.echo("\nSuccessfully initialized project")
+    raise click.UsageError("Failed to initialize project")
 
 
 @cli.command()
@@ -55,14 +59,19 @@ def validate(config):
         'targets'
     ])
     data = yaml.safe_load(config)
-    assert data.get('package').get('build') in builds, "Unsupported build type"
-    assert data.get('package').keys() and \
-        len(set(data.get('package').keys()).difference(keys)) == 0, \
-        "Missing required packager config key/values"
-    assert data.get('package').get('targets') and \
-        len(set(data.get('package').get('targets')).difference(targets)) == 0,\
-        "Unsupported target specification"
-    click.echo('\nConfig file at %s is valid' % config.name)
+    try:
+        assert data.get('package').get('build') in builds, "Unsupported build type"
+        assert data.get('package').keys() and \
+            len(set(data.get('package').keys()).difference(keys)) == 0, \
+            "Missing required packager config key/values"
+        assert data.get('package').get('targets') and \
+            len(set(data.get('package').get('targets')).difference(targets)) == 0,\
+            "Unsupported target specification"
+    except AssertionError as err:
+        raise click.BadParameter(err)
+    ctx = click.get_current_context()
+    if not ctx.obj.get('init', False):
+        click.echo('\nConfig file at %s is valid' % config.name)
     return True, data
 
 
@@ -76,4 +85,12 @@ def build(config):
             bundle = get_target_bundle(config, target)
             bundle.build()
         return
-    click.echo('Config file at %s is invalid' % config.name)
+    raise click.UsageError('Config file at %s is invalid' % config.name)
+
+
+@cli.command()
+@click.argument('config', type=click.File('r'))
+def install(config):
+    """
+    TODO: Extend the installation instructions
+    """
