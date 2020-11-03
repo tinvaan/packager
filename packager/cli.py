@@ -56,6 +56,8 @@ def validate(config):
         'build',
         'authors',
         'maintainers',
+        'install',
+        'prefix',
         'targets'
     ])
     data = yaml.safe_load(config)
