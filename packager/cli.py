@@ -49,6 +49,12 @@ def init(ctx, force=False):
 
 @cli.command()
 @click.argument('config', type=click.File('r'))
+def edit(config):
+    return show(config)
+
+
+@cli.command()
+@click.argument('config', type=click.File('r'))
 def validate(config):
     builds = set(['cmake', 'qmake', 'make'])
     targets = set(['debian', 'rpm', 'pacman'])
