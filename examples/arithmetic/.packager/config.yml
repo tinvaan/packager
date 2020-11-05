@@ -1,0 +1,12 @@
+package:
+  name: arithmetic
+  version: 1.0.0
+  description: Simple example project
+  build: cmake
+  authors:
+    - Harish Navnit <harishnavnit@gmail.com>
+  targets:
+    - path: bin/arithmetic
+      source: /home/harish/env/src/misc/playbooks/packager/examples/arithmetic/build/src/arithmetic
+  targets:
+    - debian

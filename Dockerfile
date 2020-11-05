@@ -7,4 +7,4 @@ WORKDIR /packager
 COPY . /packager
 
 ENV PYTHONPATH $(pwd):$PYTHONPATH
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
