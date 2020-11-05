@@ -1,0 +1,1 @@
+add_executable(arithmetic arithmetic.cpp main.cpp)

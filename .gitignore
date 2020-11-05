@@ -2,6 +2,7 @@
 .packager/
 .pytest_cache/
 
+build/
 DEBIAN/
 __pycache__/
 packager.egg-info/
