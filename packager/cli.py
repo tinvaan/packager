@@ -19,6 +19,9 @@ def cli(ctx):
 @click.option('--force', is_flag=True)
 @click.pass_context
 def init(ctx, force=False):
+    """
+    Initialize a project with packager config file
+    """
     valid = False
     workdir = join(os.getcwd(), '.packager')
     os.makedirs(workdir, exist_ok=True)
@@ -50,12 +53,18 @@ def init(ctx, force=False):
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def edit(config):
+    """
+    Edit the packager configuration.
+    """
     return show(config)
 
 
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def validate(config):
+    """
+    Check if the packager configuration is valid.
+    """
     builds = set(['cmake', 'qmake', 'make'])
     targets = set(['debian', 'rpm', 'pacman'])
     keys = set([
@@ -89,6 +98,9 @@ def validate(config):
 @cli.command()
 @click.argument('config', type=click.File('r'))
 def build(config):
+    """
+    Build the package per config specifications.
+    """
     click.echo()
     ctx = click.get_current_context()
     ctx.obj['build'] = True
