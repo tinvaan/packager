@@ -39,6 +39,6 @@ class Debian(PackageBundle):
     def layout(self, debdir):
         for item in self.config.install:
             source = item.get('source', '.')
-            dest = abspath(debdir + join(self.config.prefix, item.get('path', '.')))
+            dest = abspath(debdir + join(self.config.install_prefix, item.get('path', '.')))
             makedirs(dirname(dest), exist_ok=True)
             copyfile(source, dest)

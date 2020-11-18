@@ -65,8 +65,8 @@ class BaseConfig:
         return self.data.get('install', [])
 
     @property
-    def prefix(self):
-        return self.data.get('prefix', '/usr/local')
+    def install_prefix(self):
+        return self.data.get('install_prefix', '/usr/local')
 
     @property
     def build_arch(self):
