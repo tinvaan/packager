@@ -2,9 +2,11 @@ package:
     name: example-deb
     version: 1.0.0
     description: "An example packager config for a debian package"
-    build: cmake
     authors:
         - Harish Navnit <harishnavnit@gmail.com>
+    build:
+      type: cmake
+      dir: /home/harish/env/src/misc/playbooks/packager/examples/arithmetic/build
     install:
         - path: bin/foo
           source: /tmp/foo
@@ -14,6 +16,6 @@ package:
           source: /tmp/bar
         - path: share/doc/foo
           source: /tmp/foo-doc
-    prefix: /usr
+    install_prefix: /usr
     targets:
         - debian
