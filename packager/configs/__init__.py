@@ -6,8 +6,8 @@ import yaml
 from os.path import dirname
 
 
-class BaseConfig:
-    def __init__(self, configfile, data=None):
+class PackagerConfig:
+    def __init__(self, configfile, data=None, configtype='BASE'):
         self.configtype = "BASE"
         self.configfile = configfile
         self.data = data if data else self.load().get('package')
@@ -15,6 +15,11 @@ class BaseConfig:
     def __repr__(self):
         return "%s package config - %s : %s (%s)" % (
             self.configtype, self.package_name(), self.package_version(), self.configfile)
+
+    @staticmethod
+    def load(configfile):
+        with open(configfile, 'r') as f:
+            return yaml.safe_load(f)
 
     def update(self, configfile=None):
         self.data = self.load(configfile)
@@ -24,11 +29,6 @@ class BaseConfig:
 
     def validate(self, configfile):
         raise NotImplementedError()
-
-    def load(self, configfile=None):
-        configfile = configfile if configfile else self.configfile
-        with open(configfile, 'r') as f:
-            return yaml.safe_load(f)
 
     @property
     def package(self):
@@ -73,6 +73,14 @@ class BaseConfig:
         return self.data.get('architecture', "")
 
     @property
+    def build_dir(self):
+        return self.data.get('build', {}).get('dir')
+
+    @property
+    def build_type(self):
+        return self.data.get('build', {}).get('type')
+
+    @property
     def target_formats(self):
         return self.data.get('targets', [])
 
@@ -103,28 +111,3 @@ class BaseConfig:
         contact = self.data.get('contact')
         if contact:
             return contact.get('email')
-
-
-class DebConfig(BaseConfig):
-    def __init__(self, configfile, data=None):
-        super().__init__(configfile, data=data)
-        self.configtype = "Deb"
-
-
-class RPMConfig(BaseConfig):
-    def __init__(self, configfile, data=None):
-        super().__init__(configfile, data=data)
-        self.configtype = "RPM"
-
-
-class ArchiveConfig(BaseConfig):
-    def __init__(self, configfile, data=None):
-        super().__init__(configfile, data=data)
-        self.configtype = "tar.gz archives"
-
-
-class PacmanConfig(ArchiveConfig):
-    def __init__(self, configfile, data=None):
-        super().__init__(configfile, data=data)
-        self.configtype = "pacman"
-

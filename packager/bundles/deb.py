@@ -4,7 +4,8 @@ from shutil import copyfile
 from os.path import join, abspath, dirname
 from deb_pkg_tools.package import build_package
 
-from .package import PackageBundle
+from . import PackageBundle
+from ..utils import build_config
 
 
 class Debian(PackageBundle):
@@ -32,7 +33,8 @@ class Debian(PackageBundle):
                 'Architecture: all\n',
                 'Essential: no\n',
                 'Maintainer: %s\n' % self.config.maintainers,
-                'Description: %s\n' % self.config.description
+                'Description: %s\n' % self.config.description,
+                'Depends: %s\n' % build_config(self.configfile).depends()
             ]
             f.writelines(content)
 
