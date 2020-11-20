@@ -3,8 +3,12 @@ import os
 import sys
 import subprocess
 
-from .configs.base import *
+from click.exceptions import UsageError, ClickException
+
 from .bundles.deb import Debian
+from .configs.cmake import CMake
+from .configs import PackagerConfig
+from .configs.builds import BuildConfig
 
 
 def show(configfile):
@@ -13,15 +17,14 @@ def show(configfile):
     return subprocess.call([os.environ.get('EDITOR', 'xdg-open'), configfile])
 
 
-def get_target_bundle(config, target):
-    target = target.lower()
-    '''TODO
-    if target == 'rpm':
-        return RPMConfig(config.name)
-    if target == 'tar'  or target == 'archive':
-        return ArchiveConfig(config.name)
-    if target == 'pacman':
-        return PacmanConfig(config.name)
-    '''
-    if target == 'deb' or target == 'debian':
-        return Debian(DebConfig(config.name))
+def build_config(configfile):
+    data = BuildConfig.load(configfile)
+    if data.get('build', {}).geT('type').lower() == 'cmake':
+        return CMake(configfile)
+    raise UsageError('Build type not supported')
+
+
+def target_bundle(config, target):
+    if target.lower() in set(['deb', 'debian']):
+        return Debian(PackagerConfig(configfile=config, configtype='DEB'))
+    raise ClickException('Target type not supported')

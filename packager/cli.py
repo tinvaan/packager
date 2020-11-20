@@ -5,7 +5,7 @@ import click
 
 from os.path import join, exists, isfile, basename
 
-from .utils import show, get_target_bundle
+from .utils import show, target_bundle
 
 
 default = join(os.getcwd(), '.packager/config.yml')
@@ -112,7 +112,7 @@ def build(config):
     valid, data = ctx.forward(validate)
     if valid:
         for target in data.get('package', {}).get('targets', []):
-            bundle = get_target_bundle(config, target)
+            bundle = target_bundle(config, target)
             bundle.build()
         return
     raise click.UsageError('Config file at %s is invalid' % config.name)
