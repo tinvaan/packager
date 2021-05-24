@@ -1,0 +1,97 @@
+diff --git a/packager/bundles/__init__.py b/packager/bundles/__init__.py
+index 68fa9ccfb8959d55102b103533c98d1f29f90a6f..7d6eb74ff4db8c973c2e09c0b929320f64c92901 100644
+--- a/packager/bundles/__init__.py
++++ b/packager/bundles/__init__.py
+@@ -1,4 +1,10 @@
+ 
++
++from click.exceptions import UsageError
++
++from ..configs.builds.cmake import CMake
++
++
+ class PackageBundle:
+     def __init__(self, config):
+         self.config = config
+@@ -26,3 +32,8 @@ class PackageBundle:
+ 
+     def install(self):
+         pass
++
++    def build_config(self):
++        if self.config.build_type.lower() == 'cmake':
++            return CMake(self.config.configfile)
++        raise UsageError('Build type not supported')
+diff --git a/packager/bundles/deb.py b/packager/bundles/deb.py
+index 3f4dd29f00da7d35e8186f2808205ca0a788c1f1..9d012a2d55c75778899694147d98913276310454 100644
+--- a/packager/bundles/deb.py
++++ b/packager/bundles/deb.py
+@@ -41,6 +41,8 @@ class Debian(PackageBundle):
+     def layout(self, debdir):
+         for item in self.config.install:
+             source = item.get('source', '.')
+-            dest = abspath(debdir + join(self.config.install_prefix, item.get('path', '.')))
++            dest = abspath(
++                debdir + join(self.config.install_prefix, item.get('path', '.'))
++            )
+             makedirs(dirname(dest), exist_ok=True)
+             copyfile(source, dest)
+diff --git a/packager/configs/__init__.py b/packager/configs/__init__.py
+index 349bfc67b9edd9c7ff0abb2382a2fead3b0cd416..361154cc748d6990fb73680ca13a59e9749e2aab 100644
+--- a/packager/configs/__init__.py
++++ b/packager/configs/__init__.py
+@@ -13,8 +13,8 @@ class PackagerConfig:
+         self.data = data if data else self.load().get('package')
+ 
+     def __repr__(self):
+-        return "%s package config - %s : %s (%s)" % (
+-            self.configtype, self.package_name(), self.package_version(), self.configfile)
++        return "%s package config - %s(%s)" % (
++            self.configtype, self.package_name(), self.configfile)
+ 
+     @staticmethod
+     def load(configfile):
+diff --git a/packager/utils.py b/packager/utils.py
+index 5646b7528b18f0aa88eae5222ae34640875d5ddc..03cd177c281493de9eeab3a0b5415dd20ef345fd 100644
+--- a/packager/utils.py
++++ b/packager/utils.py
+@@ -3,12 +3,10 @@ import os
+ import sys
+ import subprocess
+ 
+-from click.exceptions import UsageError, ClickException
++from click.exceptions import ClickException
+ 
+ from .bundles.deb import Debian
+-from .configs.cmake import CMake
+ from .configs import PackagerConfig
+-from .configs.builds import BuildConfig
+ 
+ 
+ def show(configfile):
+@@ -17,13 +15,6 @@ def show(configfile):
+     return subprocess.call([os.environ.get('EDITOR', 'xdg-open'), configfile])
+ 
+ 
+-def build_config(configfile):
+-    data = BuildConfig.load(configfile)
+-    if data.get('build', {}).geT('type').lower() == 'cmake':
+-        return CMake(configfile)
+-    raise UsageError('Build type not supported')
+-
+-
+ def target_bundle(config, target):
+     if target.lower() in set(['deb', 'debian']):
+         return Debian(PackagerConfig(configfile=config, configtype='DEB'))
+diff --git a/tests/test_bundles_deb.py b/tests/test_bundles_deb.py
+index e91459146b0f203a271511dabde5b72a1f42ca73..5ebf7c6902cc81884ccb7f083e9f26ae490cdfa5 100644
+--- a/tests/test_bundles_deb.py
++++ b/tests/test_bundles_deb.py
+@@ -52,3 +52,7 @@ class TestDebian(unittest.TestCase):
+         for dir in listdir('/tmp'):
+             if re.search('deb-pkg-tools', dir):
+                 shutil.rmtree('/tmp/' + dir)
++
++
++if __name__ == '__main__':
++    unittest.main()

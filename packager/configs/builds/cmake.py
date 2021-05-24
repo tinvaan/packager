@@ -11,7 +11,11 @@ class CMake(BuildConfig):
         super().__init__(configfile, data)
         self.configtype = 'CMAKE'
         self.artifacts = [
-            'CMakeFiles', 'CMakeLists.txt', 'CMakeCache.txt', 'CTestConfig.cmake']
+            'CMakeFiles',
+            'CMakeLists.txt',
+            'CMakeCache.txt',
+            'CTestConfig.cmake'
+        ]
 
     def depends(self):
         results = set()
@@ -36,7 +40,8 @@ class CMake(BuildConfig):
                     try:
                         targets.append({
                             'source': target,
-                            'path': target.split(self.install_prefix)[1] })
+                            'path': target.split(self.install_prefix)[1]
+                        })
                     except IndexError:
                         raise ClickException('Inconsistent CMAKE_INSTALL_PREFIX found')
         return targets

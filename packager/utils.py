@@ -5,10 +5,9 @@ import subprocess
 
 from click.exceptions import UsageError, ClickException
 
-from .bundles.deb import Debian
-from .configs.cmake import CMake
 from .configs import PackagerConfig
 from .configs.builds import BuildConfig
+from .configs.builds.cmake import CMake
 
 
 def show(configfile):
@@ -26,5 +25,7 @@ def build_config(configfile):
 
 def target_bundle(config, target):
     if target.lower() in set(['deb', 'debian']):
+        from .bundles.deb import Debian
         return Debian(PackagerConfig(configfile=config, configtype='DEB'))
+
     raise ClickException('Target type not supported')
