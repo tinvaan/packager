@@ -1,9 +1,11 @@
 
 from setuptools import setup
+from os.path import join, dirname, abspath
 
 
 def requirements():
-    with open('./requirements.txt', 'r')as f:
+    basedir = abspath(dirname(__file__))
+    with open(join(basedir, 'requirements.txt')) as f:
         return f.read().splitlines()
 
 

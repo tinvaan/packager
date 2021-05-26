@@ -1,3 +1,4 @@
+.tox/
 .packager/
 .pytest_cache/
 
