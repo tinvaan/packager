@@ -1,2 +1,3 @@
+ipdb==0.13.7
 pytest==6.1.2
 pytest-sugar==0.9.4
