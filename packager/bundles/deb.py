@@ -1,7 +1,8 @@
 
+from pathlib import Path
 from os import makedirs
 from shutil import copyfile
-from os.path import join, abspath, dirname
+from os.path import join, dirname
 from deb_pkg_tools.package import build_package
 
 from .package import PackageBundle
@@ -39,6 +40,9 @@ class Debian(PackageBundle):
     def layout(self, debdir):
         for item in self.config.install:
             source = item.get('source', '.')
-            dest = abspath(debdir + join(self.config.prefix, item.get('path', '.')))
-            makedirs(dirname(dest), exist_ok=True)
+            dest = Path(
+                debdir + '/' + self.config.prefix +
+                '/' + item.get('path', '.')).resolve()
+            if dirname(dest) != dest:
+                makedirs(dirname(dest), exist_ok=True)
             copyfile(source, dest)

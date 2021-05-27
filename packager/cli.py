@@ -19,6 +19,7 @@ def cli(ctx):
 @click.option('--force', is_flag=True)
 @click.pass_context
 def init(ctx, force=False):
+    valid = False
     workdir = join(os.getcwd(), '.packager')
     os.makedirs(workdir, exist_ok=True)
     config = join(workdir, 'config.yml')
@@ -36,10 +37,12 @@ def init(ctx, force=False):
                 }
             }, f, sort_keys=False)
 
-    show(config)
-    ctx.obj['init'] = True
-    valid, data = ctx.invoke(validate, config=open(config, 'r', encoding='utf-8'))
-    if valid:
+    if not ctx.obj.get('dev', False):
+        show(config)
+        ctx.obj['init'] = True
+        valid, data = ctx.invoke(
+            validate, config=open(config, 'r', encoding='utf-8'))
+    if valid or ctx.obj.get('dev', False):
         return click.echo("\nSuccessfully initialized project")
     raise click.UsageError("Failed to initialize project")
 
