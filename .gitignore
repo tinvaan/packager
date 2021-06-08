@@ -2,7 +2,11 @@
 .packager/
 .pytest_cache/
 
+deb/
 build/
 DEBIAN/
 __pycache__/
 packager.egg-info/
+
+tests/fixtures/deb
+tests/fixtures/DEBIAN
