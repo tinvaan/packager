@@ -8,6 +8,9 @@ from os.path import join, exists, isfile, basename
 from .utils import show, get_target_bundle
 
 
+default = join(os.getcwd(), '.packager/config.yml')
+
+
 @click.group()
 @click.pass_context
 def cli(ctx):
@@ -51,16 +54,17 @@ def init(ctx, force=False):
 
 
 @cli.command()
-@click.argument('config', type=click.File('r'))
+@click.argument('config', nargs=-1, type=click.File('r'))
 def edit(config):
     """
     Edit the packager configuration.
     """
+    config = config[0] if config else open(default, 'r', encoding='utf-8')
     return show(config)
 
 
 @cli.command()
-@click.argument('config', type=click.File('r'))
+@click.argument('config', nargs=-1, type=click.File('r'))
 def validate(config):
     """
     Check if the packager configuration is valid.
@@ -78,6 +82,7 @@ def validate(config):
         'prefix',
         'targets'
     ])
+    config = config[0] if config else open(default, 'r', encoding='utf-8')
     data = yaml.safe_load(config)
     try:
         assert data.get('package').get('build') in builds, "Unsupported build type"
@@ -96,12 +101,13 @@ def validate(config):
 
 
 @cli.command()
-@click.argument('config', type=click.File('r'))
+@click.argument('config', nargs=-1, type=click.File('r'))
 def build(config):
     """
     Build the package per config specifications.
     """
     click.echo()
+    config = config[0] if config else open(default, 'r', encoding='utf-8')
     ctx = click.get_current_context()
     ctx.obj['build'] = True
     valid, data = ctx.forward(validate)
@@ -114,7 +120,7 @@ def build(config):
 
 
 @cli.command()
-@click.argument('config', type=click.File('r'))
+@click.argument('config', nargs=-1, type=click.File('r'))
 def install(config):
     """
     TODO: Extend the installation instructions
