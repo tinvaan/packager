@@ -1,8 +1,0 @@
-Package: arithmetic
-Version: 1.0.0
-Section: Custom
-Priority: optional
-Architecture: all
-Essential: no
-Maintainer: ['Harish Navnit <harishnavnit@gmail.com>']
-Description: Simple example project
