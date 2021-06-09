@@ -46,8 +46,7 @@ def init(ctx, force=False):
     if not ctx.obj.get('dev', False):
         show(config)
         ctx.obj['init'] = True
-        valid, data = ctx.invoke(
-            validate, config=open(config, 'r', encoding='utf-8'))
+        valid, data = ctx.invoke(validate)
     if valid or ctx.obj.get('dev', False):
         return click.echo("\nSuccessfully initialized project")
     raise click.UsageError("Failed to initialize project")
