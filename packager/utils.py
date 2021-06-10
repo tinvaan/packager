@@ -17,10 +17,12 @@ def show(configfile):
 
 
 def build_config(configfile):
-    data = BuildConfig.load(configfile)
-    if data.get('build', {}).geT('type').lower() == 'cmake':
+    data = BuildConfig.load(configfile).get('package', {})
+    if data.get('build', {}).get('type', "").lower() == 'cmake':
         return CMake(configfile)
-    raise UsageError('Build type not supported')
+
+    raise UsageError(
+        'Build type<%s> not supported' % data.get('build', {}).get('type'))
 
 
 def target_bundle(config, target):
@@ -28,4 +30,4 @@ def target_bundle(config, target):
         from .bundles.deb import Debian
         return Debian(PackagerConfig(configfile=config, configtype='DEB'))
 
-    raise ClickException('Target type not supported')
+    raise ClickException('Target type<%s> not supported' % target.lower())

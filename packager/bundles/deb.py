@@ -35,7 +35,7 @@ class Debian(PackageBundle):
                 'Essential: no\n',
                 'Maintainer: %s\n' % self.config.maintainers,
                 'Description: %s\n' % self.config.description,
-                'Depends: %s\n' % build_config(self.configfile).depends()
+                'Depends: %s\n' % build_config(self.config.configfile).depends()
             ]
             f.writelines(content)
 
