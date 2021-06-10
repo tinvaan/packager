@@ -84,7 +84,8 @@ def validate(config):
     config = config[0] if config else open(default, 'r', encoding='utf-8')
     data = yaml.safe_load(config)
     try:
-        assert data.get('package').get('build') in builds, "Unsupported build type"
+        assert data.get('package').get('build').get('type') in builds,\
+            "Unsupported build type <%s>"
         assert data.get('package').keys() and \
             len(set(data.get('package').keys()).difference(keys)) == 0, \
             "Missing required packager config key/values"
