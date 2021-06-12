@@ -29,8 +29,7 @@ class Linux(Host):
         assert self.platform == 'linux', "%s platform not supported" % self.platform
         if 'arch' in self.distro.lower():
             return Pacman()
-        if ('debian' in self.distro.lower() or
-            'ubuntu' in self.distro.lower()):
+        if set(['ubuntu', 'debian']).intersection(set(self.distro.lower())):
             return Debian()
 
     def get_owner(self, filename):
@@ -43,12 +42,16 @@ class Pacman(Host):
         self.cmd = 'pacman'
 
     def get_owner(self, filename):
-        args = [self.cmd, '-Qo', filename]
+        args = [self.cmd, '-Qo', filename.strip()]
         command = Popen(args, stdout=PIPE, stderr=PIPE)
         stdout, stderr = command.stdout.read(), command.stderr.read()
-        if command.poll() == 0:
-            return "%s=%s" % (stdout.split(' ')[-2], stdout.split(' ')[-1])
-        raise ClickException('Owner package for file "%s" not found' % filename)
+        if not stderr and command.poll() == 0:
+            owner = stdout.decode('utf-8').split(' ')[-2].strip()
+            version = stdout.decode('utf-8').split(' ')[-1].strip()
+            return "%s (>=%s)" % (
+                owner.replace('\n', ''), version.replace('\n', ''))
+        raise ClickException(
+            'Owner package for file "%s" not found' % filename.strip())
 
 
 class Debian(Host):
