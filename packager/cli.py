@@ -113,7 +113,7 @@ def build(config):
     valid, data = ctx.forward(validate)
     if valid:
         for target in data.get('package', {}).get('targets', []):
-            bundle = target_bundle(config, target)
+            bundle = target_bundle(config.name, target)
             bundle.build()
         return
     raise click.UsageError('Config file at %s is invalid' % config.name)

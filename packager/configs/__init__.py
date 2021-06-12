@@ -10,11 +10,11 @@ class PackagerConfig:
     def __init__(self, configfile, data=None, configtype='BASE'):
         self.configtype = "BASE"
         self.configfile = configfile
-        self.data = data if data else self.load().get('package')
+        self.data = data if data else self.load(configfile).get('package')
 
     def __repr__(self):
         return "%s package config - %s : %s (%s)" % (
-            self.configtype, self.package_name(), self.package_version(), self.configfile)
+            self.configtype, self.name, self.version, self.configfile)
 
     @staticmethod
     def load(configfile):
